@@ -24,3 +24,27 @@ if (require.main === module) {
 
 
 module.exports = app
+require('dotenv').config();
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const bodyParser = require('body-parser');
+
+const vehicleRoutes = require('./routes/vehicles');
+const driverRoutes = require('./routes/drivers');
+const tripRoutes = require('./routes/trip-records');
+
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+
+mongoose.connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => console.log('MongoDB Connected')).catch(err => console.error(err));
+
+app.use('/api/vehicles', vehicleRoutes);
+app.use('/api/drivers', driverRoutes);
+app.use('/api/trip-records', tripRoutes);
+
+app.listen(5000, () => console.log('Server running on port 5000'));
